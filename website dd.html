@@ -1,0 +1,312 @@
+<!-- Homepage HTML content here -->  <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drop Tracker - All Pages</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+      body { margin: 0; font-family: Arial, sans-serif; background-color: #e0f7fa; }
+      nav { background: #b2ebf2; padding: 10px; display: flex; justify-content: space-around; }
+      nav button { background: none; border: none; font-weight: bold; font-size: 16px; color: #0077b6; cursor: pointer; }
+      section { display: none; padding: 20px; }
+      section.active { display: block; }
+      .box { background: #fff; padding: 20px; border-radius: 10px; margin-top: 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); }
+      .progress { text-align: center; font-size: 24px; font-weight: bold; }
+      .buttons { display: flex; justify-content: space-around; margin-top: 20px; }
+      .water-btn { background: #0077b6; color: white; border: none; border-radius: 10px; padding: 20px; width: 100px; cursor: pointer; }
+      #plant-img { width: 50px; transition: transform 0.5s ease-in-out; }
+      .streak-day { display: inline-block; background: #a8dadc; border-radius: 50%; padding: 10px; margin: 0 5px; }
+    </style>
+  </head>
+  <body>
+  
+    <nav>
+      <button onclick="showPage('home')">Home</button>
+      <button onclick="showPage('symptoms')">Symptoms</button>
+      <button onclick="showPage('whywater')">Why Water</button>
+      <button onclick="showPage('goal')">Goal</button>
+      <button onclick="showPage('calendar')">Calendar</button>
+      <button onclick="showPage('game')">Game</button>
+    </nav>
+  
+    <!-- Home Page -->
+    <section id="home" class="active">
+      <div class="box">
+        <div class="progress"><span id="totalMl">0</span> ml / 2000 ml</div>
+        <div class="buttons">
+          <button class="water-btn" onclick="addWater(200)">200ml Glass</button>
+          <button class="water-btn" onclick="addWater(350)">350ml Mug</button>
+          <button class="water-btn" onclick="addWater(500)">500ml Bottle</button>
+        </div>
+        <div class="box">
+          <h3>Your Hydration Streak</h3>
+          <div id="streakContainer">
+            <span class="streak-day" id="day1">1</span>
+            <span class="streak-day" id="day2">2</span>
+            <span class="streak-day" id="day3">3</span>
+            <span class="streak-day" id="day4">4</span>
+            <span class="streak-day" id="day5">5</span>
+            <span class="streak-day" id="day6">6</span>
+            <span class="streak-day" id="day7">7</span>
+          </div>
+        </div>
+        <div class="box">
+          <h3>Today's Entries</h3>
+          <p id="entries">No entries yet</p>
+          <input type="number" id="customAmount" placeholder="Custom amount ml">
+          <button onclick="addCustom()">Add</button>
+        </div>
+        <div class="box">
+          <h3>Your Plant Friend</h3>
+          <img src="https://cdn-icons-png.flaticon.com/512/2909/2909644.png" id="plant-img">
+          <p>🌱 Grows with your hydration!</p>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Symptoms Page -->
+    <section id="symptoms">
+      <div class="box">
+        <h2>Symptoms of Dehydration</h2>
+        <div class="box" style="background:#b3a8f8;">Headaches & Dizziness</div>
+        <div class="box" style="background:#f8a8a8;">Dry Mouth & Lips</div>
+        <div class="box" style="background:#a8d8f8;">Fatigue & Weakness</div>
+        <div class="box" style="background:#f8f1a8;">Dark Urine</div>
+        <div class="box" style="background:#a8f8c0;">Muscle Cramps</div>
+        <div class="box" style="background:#a8b8f8;">
+          <h3>Seek Medical Help If:</h3>
+          <ul>
+            <li>Severe dizziness or confusion</li>
+            <li>Rapid heartbeat</li>
+            <li>Not urinated in 8+ hours</li>
+            <li>Seizures or loss of consciousness</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Why Water Page -->
+    <section id="whywater">
+      <div class="box">
+        <h2>Why Water Matters</h2>
+        <div class="box" style="background:#a8d8f8;"><i class="fas fa-heartbeat"></i> Heart Health</div>
+        <div class="box" style="background:#f8a8a8;"><i class="fas fa-brain"></i> Brain Function</div>
+        <div class="box" style="background:#f8f1a8;"><i class="fas fa-thermometer-half"></i> Temperature Regulation</div>
+        <div class="box" style="background:#a8f8c0;"><i class="fas fa-bolt"></i> Energy Levels</div>
+        <div class="box" style="background:#b3a8f8;"><i class="fas fa-spa"></i> Skin Health</div>
+      </div>
+    </section>
+  
+    <!-- Goal Page -->
+    <section id="goal">
+      <div class="box">
+        <h2>Your Daily Goal</h2>
+        <input type="number" id="ageInput" placeholder="Enter your age">
+        <select id="genderInput">
+          <option value="">Select Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+        <button onclick="calculateIntake()">Submit</button>
+        <p id="goalResult"></p>
+      </div>
+    </section>
+  
+    <script>
+      function showPage(pageId) {
+        document.querySelectorAll('section').forEach(section => {
+          section.classList.remove('active');
+        });
+        document.getElementById(pageId).classList.add('active');
+      }
+  
+      let total = 0;
+      let streak = 0;
+      function addWater(amount) {
+        total += amount;
+        document.getElementById('totalMl').textContent = total;
+        document.getElementById('entries').textContent += `${amount} ml, `;
+        updatePlant();
+        updateStreak();
+      }
+  
+      function addCustom() {
+        const amount = parseInt(document.getElementById('customAmount').value);
+        if (!isNaN(amount) && amount > 0) {
+          addWater(amount);
+          document.getElementById('customAmount').value = '';
+        }
+      }
+  
+      function updatePlant() {
+        const plant = document.getElementById('plant-img');
+        const progress = Math.min(total / 2000, 1);
+        plant.style.transform = `scale(${0.5 + progress * 1.5})`;
+      }
+  
+      function updateStreak() {
+        if (streak < 7) streak++;
+        for (let i = 1; i <= 7; i++) {
+          document.getElementById('day' + i).style.backgroundColor = i <= streak ? '#4caf50' : '#a8dadc';
+        }
+      }
+  
+      function calculateIntake() {
+        const age = parseInt(document.getElementById('ageInput').value);
+        const gender = document.getElementById('genderInput').value;
+        const result = document.getElementById('goalResult');
+        if (isNaN(age) || !gender) {
+          result.textContent = "Please enter valid age and select gender.";
+          return;
+        }
+        if (age <= 3) result.textContent = "1.3L per day.";
+        else if (age <= 8) result.textContent = "1.7L per day.";
+        else if (age <= 13) result.textContent = gender === "male" ? "2.4L for males." : "2.1L for females.";
+        else if (age <= 18) result.textContent = gender === "male" ? "3.3L for males." : "2.3L for females.";
+        else result.textContent = gender === "male" ? "3.7L for males." : "2.7L for females.";
+      }
+    </script>
+  <!-- Calendar Page -->
+  <section id="calendar">
+    <div class="box">
+      <h2>Calendar</h2>
+      <select id="monthSelector" onchange="createCalendar()">
+        <option value="0">January</option>
+        <option value="1">February</option>
+        <option value="2">March</option>
+        <option value="3">April</option>
+        <option value="4">May</option>
+        <option value="5" selected>June</option>
+        <option value="6">July</option>
+        <option value="7">August</option>
+        <option value="8">September</option>
+        <option value="9">October</option>
+        <option value="10">November</option>
+        <option value="11">December</option>
+      </select>
+      <div id="calendarDays" style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px;"></div>
+      <div class="box">
+        <h3>Input Intake for Selected Day:</h3>
+        <input type="number" id="dailyInput" placeholder="Enter intake ml">
+        <button onclick="saveIntake()">Save</button>
+        <p id="dailyResult"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Game Page -->
+  <section id="game">
+    <div class="box">
+      <h2>Drop Tracker Game</h2>
+      <canvas id="gameCanvas" width="400" height="600" style="border:2px solid #0077b6;border-radius:10px;"></canvas>
+      <p id="score">Score: 0</p>
+    </div>
+  </section>
+
+  <script>
+    // Calendar Logic
+    const calendarDays = document.getElementById('calendarDays');
+    const months = [31,28,31,30,31,30,31,31,30,31,30,31];
+    let selectedDay = null;
+    let currentMonth = 5;
+    let intakes = {};
+
+    function createCalendar() {
+      currentMonth = parseInt(document.getElementById('monthSelector').value);
+      calendarDays.innerHTML = '';
+      for (let i = 1; i <= months[currentMonth]; i++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.textContent = i;
+        dayDiv.style.background = '#c8f7f9';
+        dayDiv.style.padding = '10px';
+        dayDiv.style.textAlign = 'center';
+        dayDiv.style.cursor = 'pointer';
+        dayDiv.style.borderRadius = '10px';
+        dayDiv.onclick = () => selectDay(i);
+        calendarDays.appendChild(dayDiv);
+      }
+    }
+
+    function selectDay(day) {
+      selectedDay = day;
+      document.getElementById('dailyResult').textContent = `Selected Day: ${day} of ${document.getElementById('monthSelector').options[currentMonth].text}`;
+    }
+
+    function saveIntake() {
+      if (!selectedDay) {
+        document.getElementById('dailyResult').textContent = "Please select a day first.";
+        return;
+      }
+      const intake = parseInt(document.getElementById('dailyInput').value);
+      if (!isNaN(intake) && intake > 0) {
+        if (!intakes[currentMonth]) intakes[currentMonth] = {};
+        intakes[currentMonth][selectedDay] = intake;
+        document.getElementById('dailyResult').textContent = `Saved ${intake} ml for ${selectedDay}/${currentMonth + 1}.`;
+      } else {
+        document.getElementById('dailyResult').textContent = "Please enter a valid intake.";
+      }
+    }
+
+    createCalendar();
+
+    // Water Drop Game
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const drop = { x: 180, y: 550, width: 40, height: 40, speed: 5 };
+    let items = [], score = 0;
+
+    function createItem() {
+      items.push({ x: Math.random() * 370, y: -30, width: 30, height: 30, speed: 3 });
+    }
+
+    function drawDrop() {
+      ctx.fillStyle = '#0077b6';
+      ctx.beginPath();
+      ctx.arc(drop.x + 20, drop.y + 20, 20, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawItems() {
+      ctx.fillStyle = '#4dd0e1';
+      items.forEach(item => ctx.fillRect(item.x, item.y, item.width, item.height));
+    }
+
+    function moveItems() {
+      items.forEach(item => item.y += item.speed);
+    }
+
+    function detectCollisions() {
+      items = items.filter(item => {
+        if (drop.x < item.x + item.width &&
+          drop.x + drop.width > item.x &&
+          drop.y < item.y + item.height &&
+          drop.y + drop.height > item.y) {
+          score++;
+          document.getElementById('score').textContent = `Score: ${score}`;
+          return false;
+        }
+        return true;
+      });
+    }
+
+    function gameLoop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawDrop();
+      drawItems();
+      moveItems();
+      detectCollisions();
+      requestAnimationFrame(gameLoop);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' && drop.x > 0) drop.x -= drop.speed;
+      else if (e.key === 'ArrowRight' && drop.x + drop.width < canvas.width) drop.x += drop.speed;
+    });
+
+    setInterval(createItem, 1500);
+    gameLoop();
+  </script>
+</body>
+</html>
+  
